@@ -1,19 +1,21 @@
-package view;
+package view.restaurateur;
 
-public class ClientView extends View{
+import view.Page;
+import view.View;
 
-    public ClientView() {
+public class RestaurateurView extends View {
+    public RestaurateurView() {
         super();
         this.actions = new String[]{
-                "Réserver une table",
-                "Passer commande",
-                "Payer",
-                "Retour à l'accueil"
+            "Gérer les tables",
+            "Gerer les stocks",
+            "Gérer les menu",
+            "Retour à l'accueil"
         };
     }
     @Override
     protected void content() {
-        System.out.println("Point de vue Client");
+        System.out.println("Point de vue Restaurateur");
     }
 
     @Override

@@ -1,5 +1,8 @@
 package view;
 
+import view.client.ClientView;
+import view.restaurateur.RestaurateurView;
+
 import java.util.Scanner;
 
 public abstract class View {
