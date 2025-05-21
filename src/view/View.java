@@ -12,11 +12,16 @@ public abstract class View {
         this.input = new Scanner(System.in);
     }
 
-
+    /**
+     * Changer de vue
+     * @param page
+     */
     public static View changeTo(Page page)
     {
         View view = switch (page){
             case Page.ACCUEIL -> new AccueilView();
+            case Page.CLIENT -> new ClientView();
+            case Page.RESTAURATEUR -> new RestaurateurView();
             default -> new AccueilView();
         };
 
@@ -34,7 +39,7 @@ public abstract class View {
     public void render()
     {
         // Contenu de la page
-        System.out.println("------ * PAGE * ------");
+        System.out.println("------ * NOUVELLE PAGE * ------");
         System.out.println(this.title);
         this.content();
 
