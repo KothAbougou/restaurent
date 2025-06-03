@@ -27,7 +27,6 @@ public class ReserverTableView extends View {
         };
 
         this.commandes.put("ADD     ", "Ajouter une réservation");
-        this.commandes.put("SET <id>", "Modifier une réservation");
         this.commandes.put("DEL <id>", "Supprimer une réservation");
     }
 
