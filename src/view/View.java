@@ -1,13 +1,22 @@
 package view;
 
 import view.client.ClientView;
-import view.restaurateur.RestaurateurView;
+import view.client.EnregistrementClientView;
+import view.client.ReserverTableView;
+import view.restaurateur.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public abstract class View {
+    protected static final String USER_ACTION = "";
+    protected static final String INPUT_YES = "y";
+    protected static final String INPUT_NO = "n";
+    protected static final String INPUT_QUESTION = "?";
     protected String title;
     protected String[] actions = new String[]{};
+    protected HashMap<String, String> commandes = new HashMap<>();
     protected Scanner input;
 
     public View()
@@ -23,8 +32,17 @@ public abstract class View {
     {
         View view = switch (page){
             case Page.ACCUEIL -> new AccueilView();
+
             case Page.CLIENT -> new ClientView();
+            case Page.ENREGISTREMENT_CLIENT ->  new EnregistrementClientView();
+            case Page.RESERVER_TABLE ->  new ReserverTableView();
+            case Page.PAYER ->  new PayerView();
+
             case Page.RESTAURATEUR -> new RestaurateurView();
+            case Page.SERVEURS_MANAGER -> new ServeurManagerView();
+            case Page.TABLE_MANAGER -> new TableManagerView();
+            case Page.STOCK_MANAGER -> new StockManagerView();
+            case Page.MENU_MANAGER -> new MenuManagerView();
             default -> new AccueilView();
         };
 
@@ -42,18 +60,22 @@ public abstract class View {
     public void render()
     {
         // Contenu de la page
+        System.out.println();
         System.out.println("------ * NOUVELLE PAGE * ------");
-        System.out.println(this.title);
+        System.out.println(" # " + this.title);
         this.content();
 
         // Affichage de la liste des actions
         if(this.actions.length > 0)
         {
-            System.out.println("--- * Actions * ---");
+            System.out.println("-------------------------------");
             for(int i=0; i < this.actions.length; i++)
-                System.out.println(String.format("%d. %s", i+1, this.actions[i]));
+                System.out.println(String.format("\t%d. %s", i+1, this.actions[i]));
+
+            for (Map.Entry<String, String> entry : this.commandes.entrySet())
+                System.out.println("\t" + entry.getKey() + " \t " + entry.getValue());
         }
-        System.out.println("--- * Input * ---");
+        System.out.println("-------------------------------");
         this.userAction();
 
     }
@@ -69,8 +91,8 @@ public abstract class View {
      */
     protected String input(String message)
     {
-        System.out.print(message);
-        return this.input();
+        System.out.print(message + " ");
+        return this.input.nextLine();
     }
 
     /**
@@ -78,12 +100,27 @@ public abstract class View {
      */
     protected String input()
     {
+        System.out.print(">> ");
         return this.input.nextLine();
     }
 
+    /**
+     * Change le titre d'une vue
+     * @param title
+     */
     public void setTitle(String title)
     {
         this.title = title;
+    }
+
+    /**
+     * Vérifie la saisie utilisateur
+     * @param str
+     * @return
+     */
+    protected static boolean isNumeric(String str) {
+        if (str == null || str.isEmpty()) return false;
+        return str.matches("-?\\d+(\\.\\d+)?");
     }
 
 }

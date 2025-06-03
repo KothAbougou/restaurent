@@ -10,13 +10,12 @@ public class RestaurateurView extends View {
             "Gérer les tables",
             "Gerer les stocks",
             "Gérer les menu",
+            "Gérer les Serveurs",
             "Retour à l'accueil"
         };
     }
     @Override
-    protected void content() {
-        System.out.println("Point de vue Restaurateur");
-    }
+    protected void content() { }
 
     @Override
     protected void userAction(){
@@ -25,7 +24,11 @@ public class RestaurateurView extends View {
         {
             switch(action = Integer.parseInt(this.input()))
             {
-                case 4: View.changeTo(Page.ACCUEIL); break;
+                case 1: View.changeTo(Page.TABLE_MANAGER);
+                case 2: View.changeTo(Page.STOCK_MANAGER);
+                case 3: View.changeTo(Page.MENU_MANAGER);
+                case 4: View.changeTo(Page.SERVEURS_MANAGER);
+                case 5: View.changeTo(Page.ACCUEIL); break;
                 default: action = 0; break;
             }
 

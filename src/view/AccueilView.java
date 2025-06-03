@@ -12,7 +12,7 @@ public class AccueilView extends View{
 
     @Override
     protected void content() {
-        System.out.println("Contenu de la page");
+        System.out.println("\tContenu de la page");
     }
 
     @Override

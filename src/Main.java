@@ -1,3 +1,4 @@
+import db.model.Restaurent;
 import view.Page;
 
 public class Main {
