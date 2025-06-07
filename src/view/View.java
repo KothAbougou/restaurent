@@ -2,6 +2,7 @@ package view;
 
 import view.client.ClientView;
 import view.client.EnregistrementClientView;
+import view.client.PayerView;
 import view.client.ReserverTableView;
 import view.restaurateur.*;
 

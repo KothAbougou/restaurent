@@ -10,24 +10,27 @@ import view.client.state.ClientViewStateUnregistered;
 
 public class ClientView extends View {
 
-    ClientViewState clientViewState;
+    private final ClientViewState clientViewState;
+    private static final Restaurent restaurent = Restaurent.getInstance();
 
     public ClientView() {
         super();
 
-        this.clientViewState = Restaurent.getInstance().getClient() != null ?
+        clientViewState = restaurent.issetSession() ?
                 new ClientViewStateRegistered() : new ClientViewStateUnregistered();
 
         this.actions = new String[]{
                 "M'enregistrer",
                 "Réserver une table",
                 "Payer",
+                "Fermer ma session",
                 "Retour à l'accueil"
         };
     }
     @Override
     protected void content() {
-        System.out.println("Point de vue Client");
+        if(restaurent.issetSession())
+            System.out.println("\tBienvenue " + restaurent.getClient().getFullName() + " !");
     }
 
     @Override
@@ -40,11 +43,10 @@ public class ClientView extends View {
                 case 1: if(this.clientViewState.changeViewToPageEnregistrementClient() == null) action = 0; break;
                 case 2: if(this.clientViewState.changeViewToPageReserverTable() == null) action = 0; break;
                 case 3: if(this.clientViewState.changeViewToPagePayer() == null) action = 0; break;
-                case 4: View.changeTo(Page.ACCUEIL); break;
+                case 4: if(this.clientViewState.changeViewToEndSession() == null) action = 0; break;
+                case 5: View.changeTo(Page.ACCUEIL); break;
                 default: action = 0; break;
             }
-
-
         }
     }
 }

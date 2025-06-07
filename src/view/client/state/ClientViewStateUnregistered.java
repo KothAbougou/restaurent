@@ -4,15 +4,6 @@ import view.Page;
 import view.View;
 
 public class ClientViewStateUnregistered implements ClientViewState{
-    @Override
-    public ClientViewState changeToRegisteredState() {
-        return new ClientViewStateRegistered();
-    }
-
-    @Override
-    public ClientViewState changeToUnRegisteredState() {
-        return this;
-    }
 
     @Override
     public View changeViewToPageEnregistrementClient() {
@@ -21,11 +12,19 @@ public class ClientViewStateUnregistered implements ClientViewState{
 
     @Override
     public View changeViewToPageReserverTable() {
+        System.out.println("Veuillez vous enregistrer avant.");
         return null;
     }
 
     @Override
     public View changeViewToPagePayer() {
+        System.out.println("Veuillez vous enregistrer avant.");
+        return null;
+    }
+
+    @Override
+    public View changeViewToEndSession() {
+        System.out.println("Vous n'êtes pas enregistré.");
         return null;
     }
 }

@@ -2,6 +2,10 @@ package db.model;
 
 import db.dao.ReservationDAO;
 import db.dao.ServeurDAO;
+import observer.TableBillingObserver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Table extends Model{
     private int nbPlace;
@@ -9,6 +13,8 @@ public class Table extends Model{
 
     private static final ServeurDAO serveurDAO = ServeurDAO.getInstance();
     private static final ReservationDAO reservationDAO = ReservationDAO.getInstance();
+
+    private List<TableBillingObserver> observers = new ArrayList<>();
 
     public Table() {}
     public Table(int id, String... args)
@@ -65,5 +71,36 @@ public class Table extends Model{
     {
         return this.getNbClient() == 0;
     }
+
+    public float toBeBilled() {
+        float toBeBilled = 0;
+
+        for(Reservation reservation : reservationDAO.getAllUnpaidByIdTable(this.getId()))
+            toBeBilled += reservation.getPrix();
+
+        return toBeBilled;
+    }
+
+    public List<Reservation> getAllReservations()
+    {
+        return reservationDAO.getAllByIdTable(this.getId());
+    }
+
+    public void addBillingObserver(TableBillingObserver observer) {
+        this.observers.add(observer);
+    }
+
+    public void clearBillingObservers() {
+        this.observers.clear();
+    }
+
+    public void notifyBillingObservers() {
+        for (TableBillingObserver observer : observers) {
+            observer.onTableBilled();
+        }
+    }
+
+
+
 
 }

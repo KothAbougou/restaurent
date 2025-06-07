@@ -1,1 +1,2 @@
 Menu du jour;17,00;0;1;2
+Menu du soir;20,00;0;2

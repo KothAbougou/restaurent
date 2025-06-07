@@ -1,9 +1,14 @@
 package view.restaurateur;
 
+import db.dao.ClientDAO;
+import db.dao.ReservationDAO;
 import db.dao.ServeurDAO;
 import db.dao.TableDAO;
+import db.model.Client;
+import db.model.Reservation;
 import db.model.Serveur;
 import db.model.Table;
+import observer.ClientBillingObserver;
 import view.Page;
 import view.View;
 
@@ -11,6 +16,8 @@ public class TableManagerView extends View {
 
     protected static TableDAO tableDAO = TableDAO.getInstance();
     protected static ServeurDAO serveurDAO = ServeurDAO.getInstance();
+    protected static ReservationDAO reservationDAO = ReservationDAO.getInstance();
+    protected static ClientDAO clientDAO = ClientDAO.getInstance();
 
     public TableManagerView() {
         super();
@@ -21,6 +28,8 @@ public class TableManagerView extends View {
         this.commandes.put("ADD     ", "Ajouter une table");
         this.commandes.put("SET <id>", "Modifier une table");
         this.commandes.put("DEL <id>", "Supprimer une table");
+        this.commandes.put("BILL <id>", "Facturer une table");
+        this.commandes.put("ABOUT <id>", "A propos d'une table");
     }
 
     @Override
@@ -50,10 +59,41 @@ public class TableManagerView extends View {
                     case "ADD" -> this.addNewTable();
                     case "DEL" -> this.deleteTable(Integer.parseInt(act[1]));
                     case "EDIT" -> this.setTable(Integer.parseInt(act[1]));
+                    case "BILL" -> this.billTable(Integer.parseInt(act[1]));
+                    case "ABOUT" -> this.aboutTable(Integer.parseInt(act[1]));
                     default -> USER_ACTION;
                 };
             }
         }
+    }
+
+    private String aboutTable(int idTable) {
+        Table table = tableDAO.getById(idTable);
+        System.out.println(table.show());
+        System.out.println("Chiffre d'affaires de la table : " + String.format("%.2f €", reservationDAO.getTableCA(idTable)));
+        for(Reservation reservation : reservationDAO.getAllByIdTable(idTable))
+            System.out.println(reservation.show().replace("Réservation : ", "Facture : ").replace("en cours", "à facturer"));
+
+        return USER_ACTION;
+    }
+
+    private String billTable(int idTable) {
+        Table table = tableDAO.getById(idTable);
+
+        table.clearBillingObservers();
+
+        for(Reservation reservation : table.getAllReservations()) {
+            if(!reservation.isPaid()) {
+                table.addBillingObserver(new ClientBillingObserver(
+                        reservation.getClient(),
+                        reservation
+                ));
+            }
+        }
+
+        table.notifyBillingObservers();
+
+        return USER_ACTION;
     }
 
     private String setTable(int id) {
@@ -132,6 +172,6 @@ public class TableManagerView extends View {
     private void showListTables() {
         System.out.println(String.format("\t%d Tables existantes\n\tCapacité totale: %d personnes", tableDAO.getAll().size(), tableDAO.getCapaciteTotale()));
         for(Table t : tableDAO.getAll())
-            System.out.println("\t" + t.showFromStorage());
+            System.out.println("\t"+t.show() + (t.isFree() ? "": String.format(" [%.2f € à facturer]",t.toBeBilled())));
     }
 }

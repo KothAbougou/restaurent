@@ -34,6 +34,13 @@ public class ClientDAO extends DAO{
                 new Client(id, ligne) : null;
     }
 
+    public Client getByFullname(String nom, String prenom) {
+        return this.getAll().stream()
+                .filter(client -> client.getNom().equals(nom) && client.getPrenom().equals(prenom))
+                .findFirst()
+                .orElse(null);
+    }
+
     @Override
     public List<Client> getAll() {
         List<Client> clients = new ArrayList<>();

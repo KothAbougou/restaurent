@@ -36,5 +36,11 @@ public class Restaurent {
     }
 
 
+    public boolean issetSession() {
+        return this.getClient() != null;
+    }
 
+    public void endSession() {
+        this.setClient(null);
+    }
 }

@@ -11,7 +11,7 @@ public class Client extends Model{
         this.id = id;
         this.prenom = args[0];
         this.nom = args[1];
-        this.soldeBancaire = Float.parseFloat(args[2]);
+        this.soldeBancaire = Float.parseFloat(args[2].replace(",","."));
     }
 
     public String getPrenom() {
@@ -42,6 +42,11 @@ public class Client extends Model{
     public void setSoldeBancaire(float delta)
     {
         this.soldeBancaire += delta;
+    }
+
+    public boolean isAbleToPay(float amount)
+    {
+        return this.soldeBancaire >= amount;
     }
 
     @Override

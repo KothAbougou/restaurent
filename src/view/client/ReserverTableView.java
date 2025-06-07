@@ -8,11 +8,6 @@ import db.model.Reservation;
 import view.Page;
 import view.View;
 
-import java.lang.invoke.Invokers$Holder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 public class ReserverTableView extends View {
 
     protected static Restaurent restaurent = Restaurent.getInstance();
@@ -88,6 +83,7 @@ public class ReserverTableView extends View {
 
             reservation.setClient(restaurent.getClient());
             reservation.addMenu(menuDAO.getById(Integer.parseInt(this.input("Quel menu choisissez-vous :"))));
+            reservation.setTable(tableDisponible);
             reservationDAO.save(reservation);
 
             for(int i=1; i < nbPersonnes; i++)
@@ -95,15 +91,23 @@ public class ReserverTableView extends View {
                 Reservation r = reservationDAO.create();
 
                 System.out.println("Invité "+i+" :");
-                Client c = clientDAO.create();
-                c.setNom(this.input("Nom :"));
-                c.setPrenom(this.input("Prénom :"));
-                c.setSoldeBancaire(Float.parseFloat(this.input("Solde bancaire :")));
+                Client c;
 
-                c = (Client) clientDAO.flush(c);
+                String nom = this.input("Nom :");
+                String prenom = this.input("Prénom :");
 
-                reservation.setClient(c);
-                reservation.addMenu(menuDAO.getById(Integer.parseInt(this.input("Menu de l'invité :"))));
+                if((c = clientDAO.getByFullname(nom, prenom)) == null) {
+                    c = clientDAO.create();
+                    c.setNom(nom);
+                    c.setPrenom(prenom);
+                    c.setSoldeBancaire(Float.parseFloat(this.input("Solde bancaire :")));
+
+                    c = (Client) clientDAO.flush(c);
+                }
+
+                r.setClient(c);
+                r.addMenu(menuDAO.getById(Integer.parseInt(this.input("Menu de l'invité :"))));
+                r.setTable(tableDisponible);
                 reservationDAO.save(r);
             }
 

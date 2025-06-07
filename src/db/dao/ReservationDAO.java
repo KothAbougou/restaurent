@@ -5,6 +5,7 @@ import db.model.Reservation;
 import db.model.Table;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ReservationDAO extends DAO{
@@ -45,6 +46,39 @@ public class ReservationDAO extends DAO{
                 reservation : null;
     }
 
+    public List<Reservation> getAllByIdTable(int idTable)
+    {
+        return this.getAll().stream()
+                .filter(r -> r.getTable().getId() == idTable)
+                .toList();
+    }
+
+    public float getTableCA(int idTable)
+    {
+        List<Reservation> billedReservations = this.getAllByIdTable(idTable).stream()
+            .filter(Reservation::isPaid)
+            .toList();
+
+        float CA = 0;
+        for(Reservation reservation : billedReservations)
+            CA += reservation.getPrix();
+        return CA;
+    }
+
+    public List<Reservation> getAllUnpaidByIdTable(int idTable)
+    {
+        return this.getAllByIdTable(idTable).stream()
+                .filter(r -> !r.isPaid())
+                .toList();
+    }
+
+    public List<Reservation> getClientUnpaidReservations(int idClient)
+    {
+        return this.getAll().stream()
+                .filter(r -> r.getClient().getId() == idClient && !r.isPaid())
+                .toList();
+    }
+
     @Override
     public List<Reservation> getAll() {
         List<Reservation> reservations = new ArrayList<>();
@@ -66,22 +100,26 @@ public class ReservationDAO extends DAO{
                 .toList();
     }
 
-    public int countClientPerBookedTable(int idTable) {
-        List<Client> clients = this.getAll().stream()
+    public List<Client> getClientPerBookedTable(int idTable)
+    {
+        return this.getAll().stream()
                 .filter(r -> r.isTable(idTable))
                 .filter(r -> !r.isPaid())
                 .map(Reservation::getClient)
                 .distinct()
                 .toList();
+    }
 
-        return clients.size();
+    public int countClientPerBookedTable(int idTable) {
+        return this.getClientPerBookedTable(idTable).size();
     }
 
     public Table getTableAvailableByCapacity(int capacite)
     {
-        for(Table t : tableDAO.getTablesForNbPlaces(capacite))
-            if(t.isFree())
-                return t;
+        List<Table> tables = new ArrayList<>(tableDAO.getTablesForNbPlaces(capacite));
+        tables.sort(Comparator.comparing(Table::getNbPlace));
+
+        for(Table t : tables) if(t.isFree()) return t;
 
         return null;
     }
